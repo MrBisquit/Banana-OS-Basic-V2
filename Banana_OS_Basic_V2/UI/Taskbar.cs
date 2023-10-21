@@ -12,6 +12,8 @@ namespace Banana_OS_Basic_V2.UI
     public static class Taskbar
     {
         public static bool setupMode = false;
+        public static bool isMenuOpen = false;
+        public static bool isContextMenuOpen = false;
         public static void RenderTaskBar(Canvas canvas, Kernel kernel)
         {
             if (setupMode) return;
@@ -25,7 +27,32 @@ namespace Banana_OS_Basic_V2.UI
             colorScheme.Hovered = Color.Gray;
             colorScheme.Clicked = Color.DarkGray;
 
-            button.RenderButton(canvas, 0, kernel.screenHeight - 40, 40, kernel.screenHeight - 40, " ", new Action(() => { }), new Action(() => { }), colorScheme);
+            if(System.Console.KeyAvailable)
+            {
+                ConsoleKeyInfo key = System.Console.ReadKey();
+                if(key.Key == ConsoleKey.LeftWindows || key.Key == ConsoleKey.RightWindows)
+                {
+                    isMenuOpen = !isMenuOpen;
+                }
+            }
+
+            button.RenderButton(canvas, 0, kernel.screenHeight - 40, 40, kernel.screenHeight - 40, " ", new Action(() => {
+                isMenuOpen = !isMenuOpen;
+            }), new Action(() => {
+                isContextMenuOpen = !isContextMenuOpen;
+            }), colorScheme);
+
+            if(isMenuOpen)
+            {
+                canvas.DrawFilledRectangle(new Pen(Color.Black), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - (40 + kernel.screenHeight / 2)), kernel.screenWidth / 3, kernel.screenHeight / 2);
+
+                button.RenderButton(canvas, 0, kernel.screenHeight - (40 * 2), 40, 40, " ", new Action(() => {
+                    kernel.BeginShutdown();
+                }), new Action(() => { }), colorScheme);
+                button.RenderButton(canvas, 0, kernel.screenHeight - (40 * 3), 40, 40, " ", new Action(() => {
+                    kernel.BeginRestart();
+                }), new Action(() => { }), colorScheme);
+            }
         }
     }
 }

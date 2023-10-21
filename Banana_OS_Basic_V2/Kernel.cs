@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection.Metadata;
 using Banana_OS_Basic_V2.Window;
 using Cosmos.Core.IOGroup;
+using Cosmos.HAL;
 using Cosmos.System;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
@@ -18,8 +19,8 @@ namespace Banana_OS_Basic_V2
         //public static Mouse m = new Mouse();
 
         // Screen properties
-        public int screenWidth = 800;
-        public int screenHeight = 600;
+        public int screenWidth = 1920;//800;
+        public int screenHeight = 1080;//600;
 
         public bool isSetupMode = false;
 
@@ -27,6 +28,10 @@ namespace Banana_OS_Basic_V2
 
         public int fps = 0;
         Sys.FileSystem.CosmosVFS fs = new Sys.FileSystem.CosmosVFS();
+
+        private bool renderNormal = true;
+        private bool IsShuttingDown = false;
+        private bool IsRestarting = false;
         protected override void BeforeRun()
         {
             System.Console.Write("Registering FileSystem.");
@@ -54,11 +59,37 @@ namespace Banana_OS_Basic_V2
             MouseManager.ScreenHeight = (uint)screenHeight;
 
             //isSetupMode = true;
+
+            Boot.ShowBootScreen(canvas, this);
+        }
+
+        // https://github.com/CrystalOSDevelopment/CrystalOS_2.0/blob/main/CrystalOS2/Kernel.cs#L110
+        public static int FPS = 0;
+
+        public static int LastS = -1;
+        public static int Ticken = 0;
+
+        public static void Update()
+        {
+            if (LastS == -1)
+            {
+                LastS = DateTime.UtcNow.Second;
+            }
+            if (DateTime.UtcNow.Second - LastS != 0)
+            {
+                if (DateTime.UtcNow.Second > LastS)
+                {
+                    FPS = Ticken / (DateTime.UtcNow.Second - LastS);
+                }
+                LastS = DateTime.UtcNow.Second;
+                Ticken = 0;
+            }
+            Ticken++;
         }
 
         protected override void Run()
         {
-            WindowManager.CreateWindow(WindowType.User_Window, "Test", "Another test");
+            //WindowManager.CreateWindow(WindowType.User_Window, "Test", "Another test");
             tick++;
 
             /*if(tick > 150)
@@ -71,6 +102,22 @@ namespace Banana_OS_Basic_V2
 
             try
             {
+                if(!renderNormal)
+                {
+                    if(IsShuttingDown)
+                    {
+                        Boot.ShowShuttingDownScreen(canvas, this);
+                    } else if(IsRestarting)
+                    {
+                        Boot.ShowRestartingScreen(canvas, this);
+                    } else
+                    {
+                        Boot.ShowBootScreen(canvas, this);
+                    }
+                    canvas.Display();
+                    return;
+                }
+                Update();
                 canvas.DrawString(tick.ToString(), PCScreenFont.Default, new Pen(Color.Black), 15, 15);
 
                 UI.Topbar.setupMode = isSetupMode;
@@ -81,7 +128,7 @@ namespace Banana_OS_Basic_V2
                 UI.Topbar.RenderTopbar(canvas, screenWidth);
                 UI.Taskbar.RenderTaskBar(canvas, this);
 
-                canvas.DrawString($"FPS: {tick / (DateTime.Now.Second + 1)}", PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point(0, 0));
+                canvas.DrawString($"FPS: {FPS}", PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point(0, 0));
 
                 if(isSetupMode)
                 {
@@ -112,6 +159,22 @@ namespace Banana_OS_Basic_V2
             canvas.Mode = new Mode(screenWidth, screenHeight, ColorDepth.ColorDepth32);
             MouseManager.ScreenWidth = (uint)screenWidth;
             MouseManager.ScreenHeight = (uint)screenHeight;
+        }
+
+        public void BeginShutdown()
+        {
+            renderNormal = false;
+            IsShuttingDown = true;
+
+            Sys.Power.Shutdown();
+        }
+
+        public void BeginRestart()
+        {
+            renderNormal = false;
+            IsRestarting = true;
+
+            Sys.Power.Reboot();
         }
     }
 }

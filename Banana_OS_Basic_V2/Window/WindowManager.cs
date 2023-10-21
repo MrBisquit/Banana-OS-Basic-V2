@@ -41,5 +41,10 @@ namespace Banana_OS_Basic_V2.Window
 
             return success;
         }
+
+        public static List<Window> GetWindows()
+        {
+            return windows;
+        }
     }
 }

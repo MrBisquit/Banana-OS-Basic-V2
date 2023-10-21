@@ -1,4 +1,5 @@
-﻿using Cosmos.System.Graphics;
+﻿using Banana_OS_Basic_V2.Window;
+using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace Banana_OS_Basic_V2.UI
             Color c = Color.FromArgb(64, 0, 0, 0);
             canvas.DrawFilledRectangle(new Pen(c), new Cosmos.System.Graphics.Point(0, 0), screenWidth, 15);
             canvas.DrawString(clock(), PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point((screenWidth / 2) - clock().Length * 4, 0));
+            string wo = $"Windows open: {WindowManager.GetWindows().Count}";
+            canvas.DrawString(wo, PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point(screenWidth - (wo.Length * 8), 0));
         }
         public static string clock()
         {

@@ -17,6 +17,7 @@ namespace Banana_OS_Basic_V2.Setup
         public static Window.Window SetupWindow = new Window.Window(Window.WindowType.System_Window, "Setup", "Banana OS Basic Setup");
         public static void Render(Canvas canvas, Kernel kernel)
         {
+            SetupWindow.SetCanClose(false);
             SetupWindow.RenderWindow(canvas, kernel);
 
             MouseManager.ScreenWidth = (uint)kernel.screenWidth;
@@ -36,6 +37,8 @@ namespace Banana_OS_Basic_V2.Setup
             Action skipButtonLeftClick = new Action(() =>
             {
                 canvas.DrawFilledRectangle(new Pen(Color.White), new Sys.Graphics.Point(20, 20), kernel.screenWidth - 40, kernel.screenHeight - 40);
+                SetupWindow.SetCanClose(true);
+                SetupWindow.Close();
                 kernel.isSetupMode = false;
             });
 

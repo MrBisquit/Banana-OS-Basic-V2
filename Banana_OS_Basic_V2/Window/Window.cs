@@ -73,6 +73,11 @@ namespace Banana_OS_Basic_V2.Window
         {
 
         }
+
+        public void SetCanClose(bool CanClose)
+        {
+            _CanClose = CanClose;
+        }
     }
 
     public class TitleBarProperties
