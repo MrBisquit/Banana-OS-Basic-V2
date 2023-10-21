@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Banana_OS_Basic_V2.UI
 {
-    public static class Button
+    public class Button : UIElement
     {
-        public static void RenderButton(Canvas canvas, int x, int y, int width, int height, string content, Action leftClick, Action rightClick, ColorScheme colors)
+        public void RenderButton(Canvas canvas, int x, int y, int width, int height, string content, Action leftClick, Action rightClick, ColorScheme colors)
         {
             bool hovered = IsPointInsideRectangle((int)MouseManager.X, (int)MouseManager.Y, x, y, x + width, y + height);
             bool leftClicked = hovered && MouseManager.MouseState == MouseState.Left;

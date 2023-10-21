@@ -39,7 +39,9 @@ namespace Banana_OS_Basic_V2.Setup
                 kernel.isSetupMode = false;
             });
 
-            UI.Button.RenderButton(canvas, 20, kernel.screenHeight - 60, 100, 14, "Skip setup", skipButtonLeftClick, new Action(() => { }), skipButtonColors);
+            Button button = new Button();
+
+            button.RenderButton(canvas, 20, kernel.screenHeight - 60, 100, 14, "Skip setup", skipButtonLeftClick, new Action(() => { }), skipButtonColors);
 
             ScreenResize.Render(canvas, kernel);
         }

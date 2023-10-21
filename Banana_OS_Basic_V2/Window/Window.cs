@@ -1,4 +1,5 @@
 ﻿using Banana_OS_Basic_V2.Process;
+using Banana_OS_Basic_V2.UI;
 using Cosmos.System.Graphics;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ namespace Banana_OS_Basic_V2.Window
         public Process.Process Process { get; } = _Process;
         public Process.Process[] SubProcesses { get; set; }
         public TitleBarProperties TitleBarProperties { get; set; } = new TitleBarProperties();
-        public UI.UIElement[] Elements { get; set; }
+        public List<UIElement> Elements { get; set; }
 
         public Window(WindowType type, string name, string title)
         {

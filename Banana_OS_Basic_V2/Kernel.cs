@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection.Metadata;
+using Banana_OS_Basic_V2.Window;
 using Cosmos.Core.IOGroup;
 using Cosmos.System;
 using Cosmos.System.Graphics;
@@ -57,6 +58,7 @@ namespace Banana_OS_Basic_V2
 
         protected override void Run()
         {
+            WindowManager.CreateWindow(WindowType.User_Window, "Test", "Another test");
             tick++;
 
             /*if(tick > 150)
@@ -77,7 +79,7 @@ namespace Banana_OS_Basic_V2
                 canvas.Clear(Color.SkyBlue);
                 //canvas.DrawFilledRectangle(new Pen(Color.White), new Sys.Graphics.Point(10, 10), screenWidth - 20, screenHeight - 20);
                 UI.Topbar.RenderTopbar(canvas, screenWidth);
-                UI.Taskbar.RenderTaskBar(canvas, screenWidth, screenHeight);
+                UI.Taskbar.RenderTaskBar(canvas, this);
 
                 canvas.DrawString($"FPS: {tick / (DateTime.Now.Second + 1)}", PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point(0, 0));
 
