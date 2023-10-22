@@ -43,7 +43,8 @@ namespace Banana_OS_Basic_V2
 
             ShowOK("Boot checks completed successfully.");
 
-            Console.ReadKey();
+            ShowInfo("Starting UI...");
+            //Console.ReadKey();
 
             /*Console.WriteLine("Doing file checks...");
             if (Directory.Exists(@"0:\Users\"))
@@ -92,6 +93,21 @@ namespace Banana_OS_Basic_V2
         {
             canvas.Clear();
             canvas.DrawString($"Banana OS Basic V2", PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point((kernel.screenWidth / 2) - "Banana OS Basic V2".Length, kernel.screenHeight / 2));
+
+            string bottomtext = "Press F1 to boot into recovery or F2 to reset";
+            canvas.DrawString(bottomtext, PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point((kernel.screenWidth / 2) - (bottomtext.Length * 3), kernel.screenHeight - 14));
+
+            canvas.Display();
+
+            System.Threading.Thread.Sleep(2500);
+            if(Console.KeyAvailable)
+            {
+                ConsoleKey key = Console.ReadKey().Key;
+            }
+
+            canvas.Clear();
+            canvas.Display();
+            System.Threading.Thread.Sleep(500);
         }
 
         public static void ShowShuttingDownScreen(Canvas canvas, Kernel kernel)

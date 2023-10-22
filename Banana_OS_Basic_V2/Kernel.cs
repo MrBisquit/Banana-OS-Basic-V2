@@ -93,7 +93,7 @@ namespace Banana_OS_Basic_V2
         {
             if(KernelPanic)
             {
-                //canvas.Clear(Color.DarkRed);
+                canvas.Clear(Color.DarkRed);
                 string[] toprint = new string[] {
                     "Banana OS Basic V2 has Crashed",
                     "Reason: Kernel Panic",
@@ -110,7 +110,7 @@ namespace Banana_OS_Basic_V2
                         biggestLength = toprint[i].Length;
                     }
                 }
-                canvas.DrawFilledRectangle(new Pen(Color.Red), new Sys.Graphics.Point(0, 0), biggestLength * 8, 14 * toprint.Length);
+                canvas.DrawFilledRectangle(new Pen(Color.DarkRed), new Sys.Graphics.Point(0, 0), biggestLength * 8, 14 * toprint.Length);
                 for (int i = 0; i < toprint.Length; i++)
                 {
                     canvas.DrawString(toprint[i], PCScreenFont.Default, new Pen(Color.White), new Sys.Graphics.Point(0, 14 * i));
