@@ -17,7 +17,38 @@
         <Profile>VMware</Profile>
         <Description>Use VMware Player or Workstation to deploy and debug.</Description>
         <PxeInterface>192.168.0.8</PxeInterface>
+        <DebugEnabled>True</DebugEnabled>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Assets\Inverted\Minus.bmp" />
+      <None Remove="Assets\Inverted\Plus.bmp" />
+      <None Remove="Assets\Inverted\Restart.bmp" />
+      <None Remove="Assets\Inverted\Settings.bmp" />
+      <None Remove="Assets\Inverted\Shutdown.bmp" />
+      <None Remove="Assets\Inverted\X.bmp" />
+      <None Remove="Assets\Minus.bmp" />
+      <None Remove="Assets\Plus.bmp" />
+      <None Remove="Assets\Restart.bmp" />
+      <None Remove="Assets\Settings.bmp" />
+      <None Remove="Assets\Shutdown.bmp" />
+      <None Remove="Assets\X.bmp" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Assets\Inverted\Minus.bmp" />
+      <EmbeddedResource Include="Assets\Inverted\Plus.bmp" />
+      <EmbeddedResource Include="Assets\Inverted\Restart.bmp" />
+      <EmbeddedResource Include="Assets\Inverted\Settings.bmp" />
+      <EmbeddedResource Include="Assets\Inverted\Shutdown.bmp" />
+      <EmbeddedResource Include="Assets\Inverted\X.bmp" />
+      <EmbeddedResource Include="Assets\Minus.bmp" />
+      <EmbeddedResource Include="Assets\Plus.bmp" />
+      <EmbeddedResource Include="Assets\Restart.bmp" />
+      <EmbeddedResource Include="Assets\Settings.bmp" />
+      <EmbeddedResource Include="Assets\Shutdown.bmp" />
+      <EmbeddedResource Include="Assets\X.bmp" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Cosmos.Build" Version="0-*" NoWarn="NU1604" />

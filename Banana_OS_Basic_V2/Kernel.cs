@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -9,6 +10,8 @@ using Cosmos.HAL;
 using Cosmos.System;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
+using IL2CPU.API.Attribs;
+using static Cosmos.Core.INTs;
 using Sys = Cosmos.System;
 
 namespace Banana_OS_Basic_V2
@@ -32,22 +35,18 @@ namespace Banana_OS_Basic_V2
         private bool renderNormal = true;
         private bool IsShuttingDown = false;
         private bool IsRestarting = false;
+
+        private bool IsResizing = false; // Makes the screen go black for a few ticks to the user doesen't see it rerendering.
+
+        public static bool KernelPanic = false;
+        public static KernelPanicInfo KPI = new KernelPanicInfo();
         protected override void BeforeRun()
         {
             System.Console.Write("Registering FileSystem.");
             Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
             System.Console.Write("\rRegistered FileSystem.\n");
 
-            System.Console.WriteLine("Doing file checks...");
-            if(Directory.Exists(@"0:\Users\"))
-            {
-                System.Console.WriteLine("User folder exists.");
-            } else
-            {
-                System.Console.WriteLine("User folder does not exist. Setup will be run.");
-                isSetupMode = true;
-            }
-            System.Console.WriteLine("Finished file checks.");
+            Boot.DoChecks(this);
             //System.Console.WriteLine("Cosmos booted successfully. Type a line of text to get it echoed back.");
 
             //System.Console.WriteLine("Banana OS Basic booted successfully. Press any key to boot into the GUI.");
@@ -61,6 +60,9 @@ namespace Banana_OS_Basic_V2
             //isSetupMode = true;
 
             Boot.ShowBootScreen(canvas, this);
+            canvas.Display();
+
+            Cosmos.Core.CPU.EnableInterrupts();
         }
 
         // https://github.com/CrystalOSDevelopment/CrystalOS_2.0/blob/main/CrystalOS2/Kernel.cs#L110
@@ -89,8 +91,47 @@ namespace Banana_OS_Basic_V2
 
         protected override void Run()
         {
+            if(KernelPanic)
+            {
+                //canvas.Clear(Color.DarkRed);
+                string[] toprint = new string[] {
+                    "Banana OS Basic V2 has Crashed",
+                    "Reason: Kernel Panic",
+                    $"{KPI.aName}",
+                    $"{KPI.aDescription}",
+                    $"{KPI.LastKnownAddressValue}",
+                    "Press any key to restart Banana OS Basic V2..."
+                };
+                int biggestLength = 0;
+                for (int i = 0; i < toprint.Length; i++)
+                {
+                    if(toprint[i].Length > biggestLength)
+                    {
+                        biggestLength = toprint[i].Length;
+                    }
+                }
+                canvas.DrawFilledRectangle(new Pen(Color.Red), new Sys.Graphics.Point(0, 0), biggestLength * 8, 14 * toprint.Length);
+                for (int i = 0; i < toprint.Length; i++)
+                {
+                    canvas.DrawString(toprint[i], PCScreenFont.Default, new Pen(Color.White), new Sys.Graphics.Point(0, 14 * i));
+                }
+                canvas.Display();
+
+                System.Console.ReadKey();
+                Sys.Power.Reboot();
+
+                return;
+            }
+
+            Cosmos.Core.Memory.Heap.Collect();
+
             //WindowManager.CreateWindow(WindowType.User_Window, "Test", "Another test");
             tick++;
+
+            /*if(tick > 50)
+            {
+                KernelPanic = true;
+            }*/
 
             /*if(tick > 150)
             {
@@ -115,6 +156,19 @@ namespace Banana_OS_Basic_V2
                         Boot.ShowBootScreen(canvas, this);
                     }
                     canvas.Display();
+                    return;
+                }
+
+                if(IsResizing)
+                {
+                    if(tick % 10 == 0)
+                    {
+                        IsResizing = false;
+                    }
+
+                    canvas.Clear(Color.Black);
+                    canvas.Display();
+
                     return;
                 }
                 Update();
@@ -143,15 +197,40 @@ namespace Banana_OS_Basic_V2
             {
                 mDebugger.Send("Exception occurred: " + e.Message);
                 mDebugger.Send(e.Message);
+                canvas.Clear();
                 canvas.DrawString(e.Message, PCScreenFont.Default, new Pen(Color.Black), new Cosmos.System.Graphics.Point((screenWidth / 2) - e.Message.Length * 4, 115));
+                canvas.Display();
 
-                System.Console.Clear();
+                //System.Console.Clear();
                 //Stop();
             }
         }
 
+        public static void DoKernelPanic(string aName, string aDescription, ref IRQContext ctx, string LastKnownAddressValue = "0")
+        {
+            KernelPanic = true;
+            KPI = new KernelPanicInfo()
+            {
+                aName = aName,
+                aDescription = aDescription,
+                ctx = ctx,
+                LastKnownAddressValue = LastKnownAddressValue
+            };
+        }
+
+        public class KernelPanicInfo
+        {
+            public string aName = "";
+            public string aDescription = "";
+            public IRQContext ctx;
+            public string LastKnownAddressValue = "0";
+        }
+
         public void ResizeScreen(int width, int height)
         {
+            canvas.Clear(Color.Black);
+            IsResizing = true;
+
             screenWidth = width;
             screenHeight = height;
 
@@ -175,6 +254,43 @@ namespace Banana_OS_Basic_V2
             IsRestarting = true;
 
             Sys.Power.Reboot();
+        }
+
+        [Plug(Target = typeof(Cosmos.Core.INTs))]
+        public class INTs
+        {
+            /// <summary>
+            /// Handles kernel exceptions (DIVIDE BY ZERO etc.)
+            /// </summary>
+            /// <param name="eDescription">Exception description</param>
+            /// <param name="eName">Name of the exception</param>
+            /// <param name="context">Cause of the exception</param>
+            /// <param name="LastKnownAddressValue">Last known address in memory (Where in RAM the exception occurred)</param>
+            public static void HandleException(uint aEIP, string aDescription, string aName, ref IRQContext ctx, uint LastKnownAddressValue = 0)
+            {
+                string error = ctx.Interrupt.ToString();
+                const string xHex = "0123456789ABCDEF";
+
+                string ctxinterrupt = "";
+                ctxinterrupt = ctxinterrupt + xHex[(int)((ctx.Interrupt >> 4) & 0xF)];
+                ctxinterrupt = ctxinterrupt + xHex[(int)(ctx.Interrupt & 0xF)];
+
+                string LastKnownAddress = "";
+
+                if (LastKnownAddressValue != 0)
+                {
+                    LastKnownAddress = LastKnownAddress + xHex[(int)((LastKnownAddressValue >> 28) & 0xF)];
+                    LastKnownAddress = LastKnownAddress + xHex[(int)((LastKnownAddressValue >> 24) & 0xF)];
+                    LastKnownAddress = LastKnownAddress + xHex[(int)((LastKnownAddressValue >> 20) & 0xF)];
+                    LastKnownAddress = LastKnownAddress + xHex[(int)((LastKnownAddressValue >> 16) & 0xF)];
+                    LastKnownAddress = LastKnownAddress + xHex[(int)((LastKnownAddressValue >> 12) & 0xF)];
+                    LastKnownAddress = LastKnownAddress + xHex[(int)((LastKnownAddressValue >> 8) & 0xF)];
+                    LastKnownAddress = LastKnownAddress + xHex[(int)((LastKnownAddressValue >> 4) & 0xF)];
+                    LastKnownAddress = LastKnownAddress + xHex[(int)(LastKnownAddressValue & 0xF)];
+                }
+                //AIC.Main.Bluescreen.Panic(aName, aDescription, LastKnownAddress, ref ctx);
+                DoKernelPanic(aName, aDescription, ref ctx, LastKnownAddress);
+            }
         }
     }
 }
