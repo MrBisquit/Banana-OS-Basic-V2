@@ -5,11 +5,6 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banana_OS_Basic_V2", "Banana_OS_Basic_V2\Banana_OS_Basic_V2.csproj", "{F5707F24-D16B-4FE4-BBC4-94623E362F31}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{508D61AC-C8C7-446A-8379-920637586554}"
-	ProjectSection(SolutionItems) = preProject
-		Getting-Started.md = Getting-Started.md
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
