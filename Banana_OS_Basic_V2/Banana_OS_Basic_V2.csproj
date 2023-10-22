@@ -21,6 +21,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="Assets\Cursors\Normal.bmp" />
+      <None Remove="Assets\Inverted\Cursors\Normal.bmp" />
       <None Remove="Assets\Inverted\Minus.bmp" />
       <None Remove="Assets\Inverted\Plus.bmp" />
       <None Remove="Assets\Inverted\Restart.bmp" />
@@ -36,6 +38,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Assets\Cursors\Normal.bmp" />
+      <EmbeddedResource Include="Assets\Inverted\Cursors\Normal.bmp" />
       <EmbeddedResource Include="Assets\Inverted\Minus.bmp" />
       <EmbeddedResource Include="Assets\Inverted\Plus.bmp" />
       <EmbeddedResource Include="Assets\Inverted\Restart.bmp" />

@@ -70,8 +70,8 @@ namespace Banana_OS_Basic_V2.UI
 
                 try
                 {
-                    canvas.DrawImage(new Bitmap(ShutdownRaw, ColorOrder.BGR), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - (40 * 2)));
-                    canvas.DrawImage(new Bitmap(40, 40, RestartRaw, ColorDepth.ColorDepth32), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - (40 * 3)));
+                    canvas.DrawImageAlpha(new Bitmap(ShutdownRaw), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - (40 * 2)));
+                    canvas.DrawImageAlpha(new Bitmap(RestartRaw), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - (40 * 3)));
 
                     /*canvas.DrawImage(new Bitmap(10, 10, ColorDepth.ColorDepth32), 10, 10, 16, 16);
 
