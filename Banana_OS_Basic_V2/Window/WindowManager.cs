@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cosmos.System.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,13 @@ namespace Banana_OS_Basic_V2.Window
     public static class WindowManager
     {
         static List<Window> windows = new List<Window>();
+        public static void RenderWindows(Canvas canvas, Kernel kernel)
+        {
+            foreach (Window window in windows)
+            {
+                window.RenderWindow(canvas, kernel);
+            }
+        }
         public static Window CreateWindow(WindowType WindowType, string name, string title)
         {
             Window window = new Window(WindowType, name, title);
@@ -45,6 +53,11 @@ namespace Banana_OS_Basic_V2.Window
         public static List<Window> GetWindows()
         {
             return windows;
+        }
+
+        public static void CloseWindow(Window window)
+        {
+            windows.Remove(window);
         }
     }
 }

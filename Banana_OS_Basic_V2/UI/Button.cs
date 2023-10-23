@@ -34,6 +34,11 @@ namespace Banana_OS_Basic_V2.UI
             if (leftClicked) leftClick();
             if (rightClicked) rightClick();
 
+            if (clicked)
+            {
+                System.Threading.Thread.Sleep(100);
+            }
+
             //bool testHover = IsPointInsideRectangle(x + 2, y + 2, x, y, x + width, y + height);
             //canvas.DrawString($"X: {(int)MouseManager.X} Y: {(int)MouseManager.Y} {hovered} {clicked} {testHover}", Cosmos.System.Graphics.Fonts.PCScreenFont.Default, new Pen(colors.Text), new Cosmos.System.Graphics.Point(0, 0));
         }

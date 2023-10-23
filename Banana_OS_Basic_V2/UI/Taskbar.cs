@@ -1,4 +1,5 @@
-﻿using Cosmos.System;
+﻿using Banana_OS_Basic_V2.Window;
+using Cosmos.System;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
 using IL2CPU.API.Attribs;
@@ -24,6 +25,10 @@ namespace Banana_OS_Basic_V2.UI
         [ManifestResourceStream(ResourceName = "Banana_OS_Basic_V2.Assets.Inverted.Restart.bmp")]
         static byte[] RestartRaw;
         //static Bitmap RestartIcon = new Bitmap(RestartRaw);
+
+        [ManifestResourceStream(ResourceName = "Banana_OS_Basic_V2.Assets.Inverted.Settings.bmp")]
+        static byte[] SettingsRaw;
+        //static Bitmap SettingsIcon = new Bitmap(SettingsRaw);
         public static void RenderTaskBar(Canvas canvas, Kernel kernel)
         {
             if (setupMode) return;
@@ -67,11 +72,15 @@ namespace Banana_OS_Basic_V2.UI
                 button.RenderButton(canvas, 0, kernel.screenHeight - (40 * 3), 40, 40, " ", new Action(() => {
                     kernel.BeginRestart();
                 }), new Action(() => { }), colorScheme);
+                button.RenderButton(canvas, 0, kernel.screenHeight - (40 * 4), 40, 40, " ", new Action(() => {
+                    WindowManager.CreateWindow(WindowType.User_Window, "Settings", "Settings");
+                }), new Action(() => { }), colorScheme);
 
                 try
                 {
                     canvas.DrawImageAlpha(new Bitmap(ShutdownRaw), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - (40 * 2)));
                     canvas.DrawImageAlpha(new Bitmap(RestartRaw), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - (40 * 3)));
+                    canvas.DrawImageAlpha(new Bitmap(SettingsRaw), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - (40 * 4)));
 
                     /*canvas.DrawImage(new Bitmap(10, 10, ColorDepth.ColorDepth32), 10, 10, 16, 16);
 

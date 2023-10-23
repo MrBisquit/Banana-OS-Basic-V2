@@ -24,5 +24,11 @@ namespace Banana_OS_Basic_V2
 
             canvas.DrawImageAlpha(new Bitmap(NormalRaw), (int)MouseManager.X, (int)MouseManager.Y);
         }
+
+        // ChatGPT because I couldn't figure it out.
+        public static bool IsPointInsideRectangle(int x, int y, int x1, int y1, int x2, int y2)
+        {
+            return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+        }
     }
 }

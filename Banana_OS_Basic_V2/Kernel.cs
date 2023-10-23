@@ -40,6 +40,8 @@ namespace Banana_OS_Basic_V2
 
         public static bool KernelPanic = false;
         public static KernelPanicInfo KPI = new KernelPanicInfo();
+
+        public static int Timeout = 10;
         protected override void BeforeRun()
         {
             System.Console.Write("Registering FileSystem.");
@@ -91,7 +93,13 @@ namespace Banana_OS_Basic_V2
 
         protected override void Run()
         {
-            if(KernelPanic)
+            Timeout--;
+            if (Timeout <= 0)
+            {
+                Timeout = 100;
+            }
+
+            if (KernelPanic)
             {
                 canvas.Clear(Color.DarkRed);
                 string[] toprint = new string[] {
@@ -126,7 +134,7 @@ namespace Banana_OS_Basic_V2
             Cosmos.Core.Memory.Heap.Collect();
 
             //WindowManager.CreateWindow(WindowType.User_Window, "Test", "Another test");
-            tick++;
+            //tick++;
 
             /*if(tick > 50)
             {
@@ -180,6 +188,7 @@ namespace Banana_OS_Basic_V2
                 canvas.Clear(Color.SkyBlue);
                 //canvas.DrawFilledRectangle(new Pen(Color.White), new Sys.Graphics.Point(10, 10), screenWidth - 20, screenHeight - 20);
                 UI.Topbar.RenderTopbar(canvas, screenWidth);
+
                 UI.Taskbar.RenderTaskBar(canvas, this);
 
                 canvas.DrawString($"FPS: {FPS}", PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point(0, 0));
@@ -188,6 +197,8 @@ namespace Banana_OS_Basic_V2
                 {
                     Setup.Master.Render(canvas, this);
                 }
+
+                WindowManager.RenderWindows(canvas, this);
 
                 Mouse.DisplayMouse(canvas);
 
@@ -204,6 +215,9 @@ namespace Banana_OS_Basic_V2
                 //System.Console.Clear();
                 //Stop();
             }
+
+            canvas.DrawString("This: " + Timeout.ToString() + " " + Ticken.ToString() + " " + LastS.ToString(), PCScreenFont.Default, new Pen(Color.Black), new Sys.Graphics.Point(0, 14 * 3));
+            canvas.Display();
         }
 
         public static void DoKernelPanic(string aName, string aDescription, ref IRQContext ctx, string LastKnownAddressValue = "0")
