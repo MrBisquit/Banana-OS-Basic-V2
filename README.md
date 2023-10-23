@@ -2,6 +2,7 @@
 
 Important links:
 - [Getting started](/getting-started.md)
+- [Docs index](/docs/index.md)
 
 ## What is Banana OS Basic
 Banana OS Basic is an advanced [Cosmos OS](https://gocosmos.org/) that comes with advanced features and a nice graphical interface.
