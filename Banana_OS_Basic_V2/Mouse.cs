@@ -14,8 +14,13 @@ namespace Banana_OS_Basic_V2
     {
         [ManifestResourceStream(ResourceName = "Banana_OS_Basic_V2.Assets.Cursors.Normal.bmp")]
         static byte[] NormalRaw;
+
+        public static bool LastStateLC = false;
+        public static bool StateLC = false;
         public static void DisplayMouse(Canvas canvas)
         {
+            LastStateLC = StateLC;
+            StateLC = MouseManager.MouseState == MouseState.Left;
             /*Pen pen = new Pen(Color.Red);
 
             canvas.DrawLine(pen, (int)MouseManager.X, (int)MouseManager.Y, (int)MouseManager.X + 5, (int)MouseManager.Y);

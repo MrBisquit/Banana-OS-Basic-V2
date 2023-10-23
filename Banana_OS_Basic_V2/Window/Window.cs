@@ -39,11 +39,16 @@ namespace Banana_OS_Basic_V2.Window
         public Process.Process[] SubProcesses { get; set; }
         public TitleBarProperties TitleBarProperties { get; set; } = new TitleBarProperties();
         public List<UIElement> Elements { get; set; }
+        public Bitmap Icon { get; set; } = new Bitmap(14, 14, ColorDepth.ColorDepth32);
 
         public int x = 0;
         public int y = 0;
         public int width = 500;
         public int height = 475;
+
+        public bool IsMoving = false;
+        public int movedX = 0;
+        public int movedY = 0;
 
         public Window(WindowType type, string name, string title)
         {
@@ -93,9 +98,16 @@ namespace Banana_OS_Basic_V2.Window
                 x = x - width;
             }
 
+            byte[] IconRawData = new byte[Icon.rawData.Length];
+            for (int i = 0; i < IconRawData.Length; i++)
+            {
+                IconRawData[i] = (byte)Icon.rawData[i];
+            }
+
             canvas.DrawFilledRectangle(new Pen(Color.White), new Cosmos.System.Graphics.Point(x, y), width, height);
             canvas.DrawFilledRectangle(new Pen(Color.LightGray), new Cosmos.System.Graphics.Point(x, y), width, 14);
-            canvas.DrawString(WindowTitle, Cosmos.System.Graphics.Fonts.PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point(x, y));
+            canvas.DrawImageAlpha(new Bitmap(14, 14, IconRawData, Icon.Depth), x, y);
+            canvas.DrawString(WindowTitle, Cosmos.System.Graphics.Fonts.PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point(x + 14, y));
             Button button = new Button();
 
             Button.ColorScheme colorScheme = new Button.ColorScheme()
@@ -111,13 +123,41 @@ namespace Banana_OS_Basic_V2.Window
                 WindowManager.CloseWindow(this);
             }, () => { }, colorScheme);
 
-            bool hovered = Mouse.IsPointInsideRectangle((int)MouseManager.X, (int)MouseManager.Y, x, y, x + width, y + height);
+            // TODO: Fix not having the ability to move the window twice in a row.
 
-            if(hovered && MouseManager.LastMouseState == MouseState.Left)
+            bool hovered = Mouse.IsPointInsideRectangle((int)MouseManager.X, (int)MouseManager.Y, x, y, x + width, y + height);
+            bool hoverednc = Mouse.IsPointInsideRectangle((int)MouseManager.X, (int)MouseManager.Y, movedX, movedY, movedX + width, movedY + height);
+
+            if (hovered && MouseManager.MouseState == MouseState.Left)
             {
-                x = (int)MouseManager.X;
-                y = (int)MouseManager.Y;
+                IsMoving = true;
+            } else if(MouseManager.MouseState != MouseState.Left)
+            {
+                IsMoving = false;
             }
+
+            if(hoverednc && Mouse.LastStateLC && !Mouse.StateLC)
+            {
+                x = movedX - x;
+                y = movedY - y;
+
+                movedX = x;
+                movedY = y;
+            } else if(hoverednc && Mouse.LastStateLC && Mouse.StateLC)
+            {
+                movedX = (int)MouseManager.X - x;
+                movedY = (int)MouseManager.Y - y;
+                canvas.DrawRectangle(new Pen(Color.White), new Cosmos.System.Graphics.Point((int)MouseManager.X - x, (int)MouseManager.Y - y), width, height);
+            }
+
+            /*if(IsMoving && MouseManager.MouseState == MouseState.Left)
+            {
+                canvas.DrawRectangle(new Pen(Color.White), new Cosmos.System.Graphics.Point((int)MouseManager.X - x, (int)MouseManager.Y - y), width, height);
+            } else if(!IsMoving && !hovered && MouseManager.MouseState != MouseState.Left)
+            {
+                x = (int)MouseManager.X - x;
+                y = (int)MouseManager.Y - y;
+            }*/
         }
 
         public void SetCanClose(bool CanClose)

@@ -62,7 +62,17 @@ namespace Banana_OS_Basic_V2.UI
                 isContextMenuOpen = !isContextMenuOpen;
             }), colorScheme);
 
-            if(isMenuOpen)
+            List<Window.Window> windows = WindowManager.GetWindows();
+
+            for (int i = 0; i < windows.Count; i++)
+            {
+                button.RenderButton(canvas, 40 * (i + 1), kernel.screenHeight - 40, 40, 40, " ", new Action(() => {
+
+                }), new Action(() => { }), colorScheme);
+                canvas.DrawImageAlpha(windows[i].Icon, new Cosmos.System.Graphics.Point(40 * (i + 1), kernel.screenHeight - 40));
+            }
+
+            if (isMenuOpen)
             {
                 canvas.DrawFilledRectangle(new Pen(Color.Black), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - (40 + kernel.screenHeight / 2)), kernel.screenWidth / 3, kernel.screenHeight / 2);
 
@@ -73,7 +83,8 @@ namespace Banana_OS_Basic_V2.UI
                     kernel.BeginRestart();
                 }), new Action(() => { }), colorScheme);
                 button.RenderButton(canvas, 0, kernel.screenHeight - (40 * 4), 40, 40, " ", new Action(() => {
-                    WindowManager.CreateWindow(WindowType.User_Window, "Settings", "Settings");
+                    Window.Window window = WindowManager.CreateWindow(WindowType.User_Window, "Settings", "Settings");
+                    window.Icon = new Bitmap(SettingsRaw);
                 }), new Action(() => { }), colorScheme);
 
                 try
