@@ -11,6 +11,9 @@ namespace Banana_OS_Basic_V2.UI
 {
     public class Button : UIElement
     {
+        public string content = "";
+        public Action LeftClick = delegate { };
+        public Action RightClick = delegate { };
         public void RenderButton(Canvas canvas, int x, int y, int width, int height, string content, Action leftClick, Action rightClick, ColorScheme colors)
         {
             bool hovered = IsPointInsideRectangle((int)MouseManager.X, (int)MouseManager.Y, x, y, x + width, y + height);
@@ -41,6 +44,14 @@ namespace Banana_OS_Basic_V2.UI
 
             //bool testHover = IsPointInsideRectangle(x + 2, y + 2, x, y, x + width, y + height);
             //canvas.DrawString($"X: {(int)MouseManager.X} Y: {(int)MouseManager.Y} {hovered} {clicked} {testHover}", Cosmos.System.Graphics.Fonts.PCScreenFont.Default, new Pen(colors.Text), new Cosmos.System.Graphics.Point(0, 0));
+        }
+
+        public void Render(Canvas canvas, Kernel kernel)
+        {
+            bool hovered = IsPointInsideRectangle((int)MouseManager.X, (int)MouseManager.Y, x, y, x + width, y + height);
+            bool leftClicked = hovered && MouseManager.MouseState == MouseState.Left;
+            bool rightClicked = hovered && MouseManager.MouseState == MouseState.Right;
+            bool clicked = leftClicked || rightClicked;
         }
 
         public class ColorScheme

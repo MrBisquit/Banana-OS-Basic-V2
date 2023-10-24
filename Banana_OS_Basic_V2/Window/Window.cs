@@ -40,6 +40,7 @@ namespace Banana_OS_Basic_V2.Window
         public TitleBarProperties TitleBarProperties { get; set; } = new TitleBarProperties();
         public List<UIElement> Elements { get; set; }
         public Bitmap Icon { get; set; } = new Bitmap(14, 14, ColorDepth.ColorDepth32);
+        public Bitmap TaskBarIcon { get; set; } = new Bitmap(40, 40, ColorDepth.ColorDepth32);
 
         public int x = 0;
         public int y = 0;
@@ -73,7 +74,7 @@ namespace Banana_OS_Basic_V2.Window
 
         public void Close()
         {
-
+            WindowManager.CloseWindow(this);
         }
 
         public void SetWindowState(WindowState state)
@@ -106,7 +107,8 @@ namespace Banana_OS_Basic_V2.Window
 
             canvas.DrawFilledRectangle(new Pen(Color.White), new Cosmos.System.Graphics.Point(x, y), width, height);
             canvas.DrawFilledRectangle(new Pen(Color.LightGray), new Cosmos.System.Graphics.Point(x, y), width, 14);
-            canvas.DrawImageAlpha(new Bitmap(14, 14, IconRawData, Icon.Depth), x, y);
+            //canvas.DrawImageAlpha(new Bitmap(14, 14, IconRawData, Icon.Depth), x, y);
+            canvas.DrawImageAlpha(Icon, new Cosmos.System.Graphics.Point(x, y));
             canvas.DrawString(WindowTitle, Cosmos.System.Graphics.Fonts.PCScreenFont.Default, new Pen(Color.White), new Cosmos.System.Graphics.Point(x + 14, y));
             Button button = new Button();
 

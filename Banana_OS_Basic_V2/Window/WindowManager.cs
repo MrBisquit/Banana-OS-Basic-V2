@@ -59,5 +59,20 @@ namespace Banana_OS_Basic_V2.Window
         {
             windows.Remove(window);
         }
+
+        public static void ShowWindow(int id)
+        {
+            windows[id].Show();
+        }
+
+        public static void HideWindow(int id)
+        {
+            windows[id].Hide();
+        }
+
+        public static Window GetWindow(int id)
+        {
+            return windows[id];
+        }
     }
 }

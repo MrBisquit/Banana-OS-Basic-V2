@@ -29,8 +29,13 @@ namespace Banana_OS_Basic_V2.UI
         [ManifestResourceStream(ResourceName = "Banana_OS_Basic_V2.Assets.Inverted.Settings.bmp")]
         static byte[] SettingsRaw;
         //static Bitmap SettingsIcon = new Bitmap(SettingsRaw);
+
+        [ManifestResourceStream(ResourceName = "Banana_OS_Basic_V2.Assets.Inverted.S14x14.Settings.bmp")]
+        static byte[] SettingsSmallRaw;
+        //static Bitmap SettingsIcon = new Bitmap(SettingsRaw);
         public static void RenderTaskBar(Canvas canvas, Kernel kernel)
         {
+            if (Kernel.session == null) return;
             if (setupMode) return;
             canvas.DrawFilledRectangle(new Pen(Color.Black), new Cosmos.System.Graphics.Point(0, kernel.screenHeight - 40), kernel.screenWidth, 40);
 
@@ -67,9 +72,16 @@ namespace Banana_OS_Basic_V2.UI
             for (int i = 0; i < windows.Count; i++)
             {
                 button.RenderButton(canvas, 40 * (i + 1), kernel.screenHeight - 40, 40, 40, " ", new Action(() => {
-
+                    Window.Window window = WindowManager.GetWindow(i);
+                    if(window.IsVisible)
+                    {
+                        WindowManager.HideWindow(i);
+                    } else
+                    {
+                        WindowManager.ShowWindow(i);
+                    }
                 }), new Action(() => { }), colorScheme);
-                canvas.DrawImageAlpha(windows[i].Icon, new Cosmos.System.Graphics.Point(40 * (i + 1), kernel.screenHeight - 40));
+                canvas.DrawImageAlpha(windows[i].TaskBarIcon, new Cosmos.System.Graphics.Point(40 * (i + 1), kernel.screenHeight - 40));
             }
 
             if (isMenuOpen)
@@ -84,7 +96,8 @@ namespace Banana_OS_Basic_V2.UI
                 }), new Action(() => { }), colorScheme);
                 button.RenderButton(canvas, 0, kernel.screenHeight - (40 * 4), 40, 40, " ", new Action(() => {
                     Window.Window window = WindowManager.CreateWindow(WindowType.User_Window, "Settings", "Settings");
-                    window.Icon = new Bitmap(SettingsRaw);
+                    window.Icon = new Bitmap(SettingsSmallRaw);
+                    window.TaskBarIcon = new Bitmap(SettingsRaw);
                 }), new Action(() => { }), colorScheme);
 
                 try

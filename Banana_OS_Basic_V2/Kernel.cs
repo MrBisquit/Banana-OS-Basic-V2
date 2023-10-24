@@ -42,6 +42,9 @@ namespace Banana_OS_Basic_V2
         public static KernelPanicInfo KPI = new KernelPanicInfo();
 
         public static int Timeout = 10;
+
+        // User stuff (This will break a lot of things if you remove it or break it.
+        public static Session session = new Session();
         protected override void BeforeRun()
         {
             System.Console.Write("Registering FileSystem.");
@@ -167,6 +170,8 @@ namespace Banana_OS_Basic_V2
                     return;
                 }
 
+                Keyboard.Tick();
+
                 if(IsResizing)
                 {
                     if(tick % 10 == 0)
@@ -180,6 +185,7 @@ namespace Banana_OS_Basic_V2
                     return;
                 }
                 Update();
+
                 canvas.DrawString(tick.ToString(), PCScreenFont.Default, new Pen(Color.Black), 15, 15);
 
                 UI.Topbar.setupMode = isSetupMode;
@@ -196,6 +202,11 @@ namespace Banana_OS_Basic_V2
                 if(isSetupMode)
                 {
                     Setup.Master.Render(canvas, this);
+                }
+
+                if (session == null)
+                {
+                    Pages.Login.Render(canvas, this);
                 }
 
                 WindowManager.RenderWindows(canvas, this);
@@ -216,7 +227,7 @@ namespace Banana_OS_Basic_V2
                 //Stop();
             }
 
-            canvas.DrawString("This: " + Timeout.ToString() + " " + Ticken.ToString() + " " + LastS.ToString(), PCScreenFont.Default, new Pen(Color.Black), new Sys.Graphics.Point(0, 14 * 3));
+            canvas.DrawString("This: " + Timeout.ToString() + " " + Ticken.ToString() + " " + LastS.ToString() + (session == null).ToString(), PCScreenFont.Default, new Pen(Color.Black), new Sys.Graphics.Point(0, 14 * 3));
             canvas.Display();
         }
 
