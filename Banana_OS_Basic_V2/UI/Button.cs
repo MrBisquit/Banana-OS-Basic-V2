@@ -14,6 +14,8 @@ namespace Banana_OS_Basic_V2.UI
         public string content = "";
         public Action LeftClick = delegate { };
         public Action RightClick = delegate { };
+        public ColorScheme colors = new ColorScheme();
+        public bool Disabled = false;
         public void RenderButton(Canvas canvas, int x, int y, int width, int height, string content, Action leftClick, Action rightClick, ColorScheme colors)
         {
             bool hovered = IsPointInsideRectangle((int)MouseManager.X, (int)MouseManager.Y, x, y, x + width, y + height);
@@ -46,12 +48,34 @@ namespace Banana_OS_Basic_V2.UI
             //canvas.DrawString($"X: {(int)MouseManager.X} Y: {(int)MouseManager.Y} {hovered} {clicked} {testHover}", Cosmos.System.Graphics.Fonts.PCScreenFont.Default, new Pen(colors.Text), new Cosmos.System.Graphics.Point(0, 0));
         }
 
-        public void Render(Canvas canvas, Kernel kernel)
+        public override void Render(Canvas canvas, Kernel kernel)
         {
             bool hovered = IsPointInsideRectangle((int)MouseManager.X, (int)MouseManager.Y, x, y, x + width, y + height);
-            bool leftClicked = hovered && MouseManager.MouseState == MouseState.Left;
-            bool rightClicked = hovered && MouseManager.MouseState == MouseState.Right;
+            bool leftClicked = hovered && !Mouse.LastStateLC && Mouse.StateLC && !Disabled;
+            //bool rightClicked = hovered && MouseManager.MouseState == MouseState.Right;
+            bool rightClicked = false;
             bool clicked = leftClicked || rightClicked;
+
+            Pen pen = new Pen(colors.Normal);
+
+            if(hovered)
+            {
+                pen.Color = colors.Hovered;
+            } else if(clicked)
+            {
+                pen = new Pen(colors.Clicked);
+            } 
+            
+            if(Disabled)
+            {
+                pen = new Pen(colors.Disabled);
+            }
+
+            canvas.DrawFilledRectangle(pen, new Cosmos.System.Graphics.Point(x, y), width, height);
+            canvas.DrawString(content, Cosmos.System.Graphics.Fonts.PCScreenFont.Default, new Pen(colors.Text), new Cosmos.System.Graphics.Point(x, y));
+
+            if (leftClicked) LeftClick();
+            if (rightClicked) RightClick();
         }
 
         public class ColorScheme
@@ -59,6 +83,7 @@ namespace Banana_OS_Basic_V2.UI
             public Color Normal { get; set; }
             public Color Hovered { get; set; }
             public Color Clicked { get; set; }
+            public Color Disabled { get; set; }
 
             public Color Text { get; set; }
         }

@@ -44,7 +44,7 @@ namespace Banana_OS_Basic_V2
         public static int Timeout = 10;
 
         // User stuff (This will break a lot of things if you remove it or break it.
-        public static Session session = new Session();
+        public static Session session = null;
         protected override void BeforeRun()
         {
             System.Console.Write("Registering FileSystem.");

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Banana_OS_Basic_V2.UI
 {
-    public class UIElement
+    public abstract class UIElement
     {
         public Action RenderElement;
 
@@ -20,6 +20,6 @@ namespace Banana_OS_Basic_V2.UI
         public int width = 0;
         public int height = 0;
 
-        //public partial void Render() { }
+        public abstract void Render(Canvas canvas, Kernel kernel);
     }
 }
